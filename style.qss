@@ -1,67 +1,209 @@
+@charset "UTF-8";
 /* 莫兰迪色系主题 */
-QPushButton {
-    background-color: #b8c8d8; /* 提亮按钮颜色 */
-    color: #5a4a3a; /* 加深文字颜色 */
-    border: none;
-    padding: 8px;
-    border-radius: 4px;
-}
 QMainWindow {
-    background-color: #e9e5e2;
+    background-color: #F0F2F5; /* Light grayish-blue, soft background */
+}
+
+QWidget {
+    font-family: "Inter", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Modern font stack */
+    color: #202124; /* Dark gray for primary text */
 }
 
 QGroupBox {
-    border: none;
-    margin-top: 10px;
-    padding-top: 15px;
-    background-color: #f5f0eb;
-    border-radius: 6px;
+    background-color: #FFFFFF; /* White background for panels */
+    border: 1px solid #DADCE0; /* Light gray border */
+    border-radius: 12px; /* Rounded corners for panels */
+    margin-top: 10px; /* Space for the title */
     padding: 10px;
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    left: 10px;
-    padding: 0 3px;
-    color: #6b5b4d;
+    subcontrol-position: top left; /* Position title at the top left */
+    padding: 5px 10px;
+    background-color: transparent;
+    color: #202124;
+    font-weight: bold;
 }
 
-QPushButton {
-    min-width: 80px;
-    padding: 8px 12px;
+QLabel {
+    color: #3c4043; /* Slightly softer dark gray for labels */
+    background-color: transparent; /* Ensure labels don't have their own background unless specified */
+}
+
+QLineEdit, QTextEdit, QSpinBox {
+    background-color: #FFFFFF;
+    border: 1px solid #DADCE0; /* Light gray border for inputs */
+    border-radius: 8px; /* Rounded corners for inputs */
+    padding: 8px;
+    color: #202124;
+}
+
+QLineEdit:focus, QTextEdit:focus, QSpinBox:focus {
+    border: 1px solid #4A80F0; /* Blue border on focus, matching button */
+}
+
+QSpinBox { /* General styling for the spinbox, mostly for the line edit part */
+    padding-right: 18px; /* Make space for the custom buttons, adjusted for smaller buttons */
+}
+
+QSpinBox::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right; /* Position at the top right corner */
+    width: 16px; /* Reduced width of the button area */
+    height: 11px; /* Reduced height of the button area */
     border: none;
-    border-radius: 4px;
-    background-color: #a8b8c8;
-    color: #f5f0eb;
+    background-color: transparent;
+}
+
+QSpinBox::up-button:hover {
+    background-color: #F0F8FF; /* Light hover feedback */
+}
+
+QSpinBox::up-arrow {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;   /* Smaller arrow base */
+    border-right: 4px solid transparent;  /* Smaller arrow base */
+    border-bottom: 5px solid #4A80F0;   /* Smaller arrow height, blue upward-pointing triangle */
+    margin: 0 auto; /* Center the arrow */
+}
+
+QSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right; /* Position at the bottom right corner */
+    width: 16px; /* Reduced width of the button area */
+    height: 11px; /* Reduced height of the button area */
+    border: none;
+    background-color: transparent;
+}
+
+QSpinBox::down-button:hover {
+    background-color: #F0F8FF; /* Light hover feedback */
+}
+
+QSpinBox::down-arrow {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;   /* Smaller arrow base */
+    border-right: 4px solid transparent;  /* Smaller arrow base */
+    border-top: 5px solid #4A80F0;      /* Smaller arrow height, blue downward-pointing triangle */
+    margin: 0 auto; /* Center the arrow */
+}
+
+/* Standard Button Style */
+QPushButton {
+    background-color: #FFFFFF; /* White background */
+    color: #4A80F0; /* Blue text */
+    border: 1px solid #4A80F0; /* Blue border */
+    padding: 10px 15px;
+    border-radius: 8px; /* Rounded corners */
+    font-weight: 500;
 }
 
 QPushButton:hover {
-    background-color: #8fa3b8;
+    background-color: #F0F8FF; /* AliceBlue on hover */
+    color: #3570DC; /* Darker blue text on hover */
+    border-color: #3570DC; /* Darker blue border on hover */
+}
+
+PUSHBUTTON:pressed {
+    background-color: #E0F0FF; /* Lighter blue background on press */
+    color: #2A5ABF; /* Even darker blue text on press */
+    border-color: #2A5ABF; /* Even darker blue border on press */
+}
+
+/* Primary action button style (e.g., "Create Animation") */
+PUSHBUTTON#create_btn {
+    background-color: #4A80F0; /* Prominent blue */
+    color: white;
+    font-weight: bold;
+    border: none; /* Primary button might not need a border if background is strong */
+}
+
+PUSHBUTTON#create_btn:hover {
+    background-color: #3570DC; /* Darker blue on hover */
+}
+
+PUSHBUTTON#create_btn:pressed {
+    background-color: #2A5ABF; /* Even darker blue on press */
 }
 
 QListWidget {
-    border: none;
-    border-radius: 4px;
-    padding: 2px;
-    background-color: #f5f0eb;
+    background-color: #FFFFFF;
+    border: 1px solid #DADCE0;
+    border-radius: 8px;
+    padding: 5px;
 }
 
-QLineEdit, QSpinBox, QComboBox {
-    border: none;
-    border-radius: 4px;
+QListWidget::item {
     padding: 8px;
-    min-height: 20px;
-    background-color: #f5f0eb;
+    border-radius: 4px; /* Rounded corners for items */
+}
+
+QListWidget::item:selected {
+    background-color: #D6E4FF; /* Light blue selection color */
+    color: #174EA6; /* Darker blue text for selected item */
+}
+
+QListWidget::item:hover:!selected {
+    background-color: #F1F3F4; /* Light gray hover for non-selected items */
+}
+
+QTabWidget::pane {
+    border: 1px solid #DADCE0;
+    border-radius: 0 0 12px 12px; /* Match GroupBox, but only bottom corners if tabs are on top */
+    background-color: #FFFFFF;
+    padding: 10px;
+}
+
+QTabBar::tab {
+    background-color: #E8EAED; /* Light gray for inactive tabs */
+    color: #5f6368; /* Medium gray text for inactive tabs */
+    padding: 10px 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border: 1px solid #DADCE0;
+    border-bottom: none; /* No bottom border for the tab itself */
+    margin-right: 2px;
+    font-weight: 500;
+}
+
+QTabBar::tab:selected {
+    background-color: #FFFFFF; /* White for active tab, blending with pane */
+    color: #1A73E8; /* Blue text for selected tab */
+    border: 1px solid #DADCE0;
+    border-bottom: 1px solid #FFFFFF; /* White bottom border to blend with pane */
+}
+
+QTabBar::tab:hover:!selected {
+    background-color: #DADCE0; /* Slightly darker gray for hovered non-selected tabs */
 }
 
 QProgressBar {
-    border: none;
-    border-radius: 4px;
+    border: 1px solid #DADCE0;
+    border-radius: 8px;
     text-align: center;
-    background-color: #d8d3ce;
+    background-color: #FFFFFF;
+    color: #202124;
 }
 
 QProgressBar::chunk {
-    background-color: #a8b8c8;
-    border-radius: 4px;
+    background-color: #4A80F0; /* Blue for progress chunk */
+    border-radius: 7px; /* Slightly less than parent for inset look */
+    margin: 1px;
+}
+
+QSplitter::handle {
+    background-color: #D1D3D6; /* Gray for splitter handle */
+}
+
+QSplitter::handle:horizontal {
+    height: 4px; /* Make horizontal handle more visible */
+    margin: 0 2px;
+}
+
+QSplitter::handle:vertical {
+    width: 4px; /* Make vertical handle more visible */
+    margin: 2px 0;
 }
