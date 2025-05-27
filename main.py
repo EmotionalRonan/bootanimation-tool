@@ -15,7 +15,8 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QListWidget, QSpinBox, QTextEdit,
     QFileDialog, QMessageBox, QProgressBar, QGroupBox,
-    QGridLayout, QLineEdit, QComboBox, QCheckBox, QTabWidget, QListWidgetItem
+    QGridLayout, QLineEdit, QComboBox, QCheckBox, QTabWidget, QListWidgetItem,
+    QSplitter
 )
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap, QFont, QIcon
@@ -185,7 +186,7 @@ class BootAnimationCreator(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("开关机动画制作工具")
-        self.setGeometry(100, 100, 850, 700) # 稍微增大窗口尺寸
+        self.setGeometry(100, 100, 950, 700) # 增大默认窗口尺寸
         self.images_data = [] 
         self.segment_widgets_list = [] # 存储每个段落的UI控件
         self.init_ui()
@@ -193,6 +194,10 @@ class BootAnimationCreator(QMainWindow):
     
     def _add_new_segment_ui(self):
         """动态添加一个新的动画段落到UI"""
+        if len(self.segment_widgets_list) >= 8:
+            QMessageBox.information(self, "提示", "最多只能添加8个动画段落。")
+            return
+
         segment_index = len(self.segment_widgets_list)
         segment_name = f"Part {segment_index}"
 
@@ -263,6 +268,12 @@ class BootAnimationCreator(QMainWindow):
             self.remove_segment_btn.show()
         else:
             self.remove_segment_btn.hide()
+        
+        if len(self.segment_widgets_list) >= 8:
+            self.add_segment_btn.setEnabled(False)
+            self.status_label.setText(f"已添加 Part {segment_index}. 已达到最大段落数 (8).")
+        else:
+            self.status_label.setText(f"已添加 Part {segment_index}")
 
 
     def _remove_last_segment_ui(self):
@@ -288,6 +299,11 @@ class BootAnimationCreator(QMainWindow):
             if len(self.segment_widgets_list) <= 1:
                 self.remove_segment_btn.hide()
             self.status_label.setText(f"已移除 Part {segment_to_remove_index}")
+
+            # Re-enable add button if below max and it was disabled
+            if len(self.segment_widgets_list) < 8 and not self.add_segment_btn.isEnabled():
+                self.add_segment_btn.setEnabled(True)
+
         else:
             QMessageBox.information(self, "提示", "至少需要保留一个动画段落。")
 
@@ -295,11 +311,11 @@ class BootAnimationCreator(QMainWindow):
     def init_ui(self):
         """初始化用户界面"""
         self.setWindowTitle("开关机动画制作工具")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 950, 700) # 增大默认窗口尺寸
         
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        main_layout = QVBoxLayout(central_widget)
+        main_layout = QVBoxLayout(central_widget) # 主垂直布局
         
         title_label = QLabel("开关机动画制作工具")
         title_label.setAlignment(Qt.AlignCenter)
@@ -308,8 +324,15 @@ class BootAnimationCreator(QMainWindow):
         title_font.setBold(True)
         title_label.setFont(title_font)
         main_layout.addWidget(title_label)
+
+        # --- 创建 QSplitter --- 
+        splitter = QSplitter(Qt.Horizontal)
+
+        # --- 左侧面板 (段落管理和TabWidget) ---
+        left_panel_widget = QWidget()
+        left_panel_layout = QVBoxLayout(left_panel_widget)
         
-        # --- 段落管理按钮 ---
+        # 段落管理按钮
         segment_management_layout = QHBoxLayout()
         self.add_segment_btn = QPushButton("添加新段落")
         self.add_segment_btn.clicked.connect(self._add_new_segment_ui)
@@ -317,15 +340,21 @@ class BootAnimationCreator(QMainWindow):
 
         self.remove_segment_btn = QPushButton("移除最后段落")
         self.remove_segment_btn.clicked.connect(self._remove_last_segment_ui)
-        self.remove_segment_btn.hide() # 初始隐藏，因为至少有一个段落
+        self.remove_segment_btn.hide() # 初始隐藏
         segment_management_layout.addWidget(self.remove_segment_btn)
-        main_layout.addLayout(segment_management_layout)
+        left_panel_layout.addLayout(segment_management_layout)
 
-        # --- 动态段落的TabWidget ---
+        # 动态段落的TabWidget
         self.segments_tab_widget = QTabWidget()
-        main_layout.addWidget(self.segments_tab_widget)
+        left_panel_layout.addWidget(self.segments_tab_widget)
         
-        # 设置区域 (FPS 和输出路径保持，循环次数移到每个段落中)
+        splitter.addWidget(left_panel_widget)
+
+        # --- 右侧面板 (全局设置和预览) ---
+        right_panel_widget = QWidget()
+        right_panel_layout = QVBoxLayout(right_panel_widget)
+        
+        # 全局动画设置
         settings_group = QGroupBox("全局动画设置")
         settings_layout = QGridLayout(settings_group)
         
@@ -343,7 +372,7 @@ class BootAnimationCreator(QMainWindow):
         self.browse_btn = QPushButton("浏览")
         self.browse_btn.clicked.connect(self.browse_output_path)
         settings_layout.addWidget(self.browse_btn, 1, 3)
-        main_layout.addWidget(settings_group)
+        right_panel_layout.addWidget(settings_group)
         
         # 预览区域
         preview_group = QGroupBox("预览")
@@ -356,20 +385,27 @@ class BootAnimationCreator(QMainWindow):
         self.image_info_label = QLabel("图片信息: 未选择")
         self.image_info_label.setAlignment(Qt.AlignCenter)
         preview_layout.addWidget(self.image_info_label)
-        main_layout.addWidget(preview_group)
+        right_panel_layout.addWidget(preview_group)
+        right_panel_layout.addStretch() # 添加伸缩，使预览区域不会过大
+
+        splitter.addWidget(right_panel_widget)
         
-        # 进度条
+        # 设置splitter的初始大小比例 (例如，左边占60%，右边占40%)
+        splitter.setSizes([500, 400]) 
+        
+        main_layout.addWidget(splitter) # 将splitter添加到主布局
+        
+        # --- 底部控件 (进度条, 创建按钮, 状态标签) ---
         self.progress_bar = QProgressBar()
         self.progress_bar.setVisible(False)
         main_layout.addWidget(self.progress_bar)
         
-        # 创建按钮
         self.create_btn = QPushButton("创建动画")
+        self.create_btn.setObjectName("create_btn") # Set object name for QSS
         self.create_btn.clicked.connect(self.create_animation)
         self.create_btn.setMinimumHeight(40)
         main_layout.addWidget(self.create_btn)
         
-        # 状态标签
         self.status_label = QLabel("就绪")
         main_layout.addWidget(self.status_label)
 
