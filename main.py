@@ -386,8 +386,10 @@ def main():
     """主函数"""
     app = QApplication(sys.argv)
     # 设置全局样式
-    with open(os.path.join(os.path.dirname(__file__), "style.qss"), "r", encoding="utf-8") as f:
-        app.setStyleSheet(f.read())
+    style_file = Path(__file__).parent / "style.qss"
+    if style_file.exists():
+        with open(style_file, "r") as f:
+            app.setStyleSheet(f.read())
     creator = BootAnimationCreator()
     creator.setWindowTitle("开关机动画制作工具") # Removed "Android"
     creator.show()
